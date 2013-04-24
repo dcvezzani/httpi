@@ -31,12 +31,19 @@ module HTTPI
       # Accessor for the cacert file to validate SSL certificates.
       attr_accessor :ca_cert_file
 
+      # Accessor for the trusted certs to validate with peer certificates.
+      attr_accessor :cert_store_files
+
       # Returns the cert type to validate SSL certificates PEM|DER.
       def cert_type
         @cert_type ||= :pem
       end
 
-      # Sets the cert type to validate SSL certificates PEM|DER.
+      def initialize
+        @cert_store_files = []
+      end
+
+      # Ses the cert type to validate SSL certificates PEM|DER.
       def cert_type=(type)
         unless CERT_TYPES.include? type
           raise ArgumentError, "Invalid SSL cert type #{type.inspect}\n" +

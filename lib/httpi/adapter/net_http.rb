@@ -94,11 +94,22 @@ module HTTPI
         @client.read_timeout = @request.read_timeout if @request.read_timeout
       end
 
+      def setup_cert_store(cert_store_files=[])
+        @client.cert_store = OpenSSL::X509::Store.new 
+        @client.cert_store.set_default_paths # Optional method that will auto-include the system CAs.
+
+        cert_store_files.each do |trusted_file|
+          @client.cert_store.add_cert(OpenSSL::X509::Certificate.new(File.read(trusted_file)))
+        end
+      end
+
       def setup_ssl_auth
         ssl = @request.auth.ssl
 
         unless ssl.verify_mode == :none
           @client.ca_file = ssl.ca_cert_file if ssl.ca_cert_file
+
+          setup_cert_store(ssl.cert_store_files) if ssl.cert_store_files.length > 0
         end
 
         # Send client-side certificate regardless of state of SSL verify mode
