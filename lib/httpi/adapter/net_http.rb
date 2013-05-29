@@ -109,7 +109,7 @@ module HTTPI
         unless ssl.verify_mode == :none
           @client.ca_file = ssl.ca_cert_file if ssl.ca_cert_file
 
-          setup_cert_store(ssl.cert_store_files) if ssl.cert_store_files.length > 0
+          setup_cert_store(ssl.cert_store_files) if (ssl.cert_store_files && ssl.cert_store_files.length > 0)
         end
 
         # Send client-side certificate regardless of state of SSL verify mode
